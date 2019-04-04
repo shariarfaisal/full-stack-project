@@ -1,6 +1,6 @@
 const User = require('../model/User');
 const registerValidator = require('../validator/registerValidator')
-
+const bcrypt = require('bcrypt');
 
 // Create User Section ...
 const postUser = (req,res,next) => {
@@ -9,15 +9,46 @@ const postUser = (req,res,next) => {
   if(!validate.isValid){
     res.status(400).json(validate.error)
   }else{
-    res.status(200).json({
-      message: 'Everything is ok'
-    })
+    User.findOne({email})
+        .then(user => {
+            if(user){
+              return res.status(400).json({
+                message: 'Email Already Exist'
+              })
+            }
+
+            bcrypt.hash(password,11,(err,hash) => {
+                if(err){
+                  return res.status(500).json({
+                    message: 'Server Eroor Occured'
+                  })
+                }
+
+
+                let user = new User({
+                  name,
+                  email,
+                  password: hash
+                })
+                user.save()
+                    .then(user => {
+                      res.status(201).json({
+                        message: 'User Created Successfully',
+                        user 
+                      })
+                    })
+
+
+            })
+
+
+        })
+        .catch(err => {
+          res.send(500).json({
+            message: 'Server Error Occured'
+          })
+        })
   }
-  // let user = new User({
-  //   name: name,
-  //   email: email,
-  //   password: password
-  // })
 }
 
 module.exports = {
