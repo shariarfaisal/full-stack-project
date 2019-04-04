@@ -1,7 +1,8 @@
 const User = require('../model/User');
 const registerValidator = require('../validator/registerValidator')
 const bcrypt = require('bcrypt');
-
+const jwt = require('jsonwebtoken');
+const loginValidator = require('../validator/loginValidator')
 // Create User Section ...
 const postUser = (req,res,next) => {
   let {name,email,password,confirmPassword} = req.body;
@@ -34,7 +35,7 @@ const postUser = (req,res,next) => {
                     .then(user => {
                       res.status(201).json({
                         message: 'User Created Successfully',
-                        user 
+                        user
                       })
                     })
 
@@ -51,6 +52,46 @@ const postUser = (req,res,next) => {
   }
 }
 
+
+// login user ..
+
+const loginUser = (req,res,next) => {
+  let {email,password} = req.body;
+  let validate = loginValidator({email,password})
+
+  if(!validate.isValid){
+      return res.status(400).json(validate.error)
+  }
+
+  User.findOne({email})
+      .then(user => {
+        if(!user){
+          return res.status(400).json({
+            message: 'User not found'
+          })
+        }
+        bcrypt.compare(password,user.password,(err,result) => {
+          if(err){
+            return res.status(500).send('Server Error Occured')
+          }
+          if(!result){
+            return res.status(400).send("password does't match.")
+          }
+
+          let token = jwt.sign({_id: user._id,name: user.name,email:user.email},'secret',{expiresIn: '2h'})
+
+          res.status(200).json({
+            message: 'Login successfull ',
+            token: `Bearer ${token}`
+          })
+        })
+      })
+      .catch(err => {
+        res.status(500).send(err.message)
+      })
+}
+
 module.exports = {
-  postUser
+  postUser,
+  loginUser
 }
