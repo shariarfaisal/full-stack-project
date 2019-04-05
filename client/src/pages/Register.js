@@ -29,17 +29,17 @@ class Register extends React.Component{
   submitHandler = e =>{
     e.preventDefault();
     let {name,email,password,confirmPassword} = this.state;
-    this.props.register({
-      name,email,password,confirmPassword
-    },this.props.history)
+    this.props.register({name,email,password,confirmPassword},this.props.history);
   }
   render(){
     let {name,email,password,confirmPassword,error} = this.state;
     return (
       <div className="row">
+
         <div className="col-md-6 offset-md-3">
           <h1 className="text-center my-5">Register New Account </h1>
           <form onSubmit={this.submitHandler}>
+
               <div className="form-group">
                 <label htmlFor="name">Name</label>
                 <input
@@ -56,13 +56,14 @@ class Register extends React.Component{
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
-                  className={error.email? "form-control is-invalid" : "form-control"}
+                  className={error.email || error.message? "form-control is-invalid" : "form-control"}
                   placeholder="Enter your email "
                   id="email"
                   value={email}
                   onChange={this.changeHandler}
                 />
               {error.email && <div className="invalid-feedback">{error.email}</div>}
+              {error.message && <div className="invalid-feedback">{error.message}</div>}
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
@@ -96,7 +97,9 @@ class Register extends React.Component{
     )
   }
 }
-const mapStateToProps = state => ({
-  auth: state.auth
-})
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth
+  }
+}
 export default connect(mapStateToProps,{register})(Register);
