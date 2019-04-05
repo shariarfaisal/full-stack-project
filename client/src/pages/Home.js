@@ -1,9 +1,26 @@
 import React from 'react';
-
-const Home = () =>{
-  return (
-    <h1>I am home</h1>
-  )
+import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
+import {logout} from '../store/actions/authActions';
+class Home extends React.Component{
+  render(){
+    return (
+      <div>
+        <h1 className="text-center my-5">this is home pate </h1>
+        {
+          this.props.auth.isAuthenticated ?
+            <button onClick={() => this.props.logout(this.props.history)} className="btn btn-danger">Logout</button>
+          : <Link to="/login"><button className="btn btn-success">Login</button></Link>
+        }
+      </div>
+    )
+  }
 }
 
-export default Home;
+
+
+  const mapStateToProps  = state => ({
+    auth: state.auth
+  })
+
+export default connect(mapStateToProps,{logout})(Home);

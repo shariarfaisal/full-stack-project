@@ -4,5 +4,21 @@ import './index.css';
 import {Provider} from 'react-redux';
 import store from './store';
 import App from './components/App';
+import jwtDecode from 'jwt-decode';
+import setAuthToken from './utils/setAuthToken';
+const token = localStorage.getItem('auth_token');
+if(token){
+  const decode = jwtDecode(token);
+  setAuthToken(token);
+  store.dispatch({
+    type: 'SET_USER',
+    payload:{
+      user: decode
+    }
+  })
+}
+
+
+
 
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
