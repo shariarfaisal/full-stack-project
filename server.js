@@ -6,8 +6,6 @@ app.listen(PORT,() => {
 })
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const userRouter = require('./routers/user');
 
 // Connect with mongodb ...
 const mongoose = require('mongoose');
@@ -23,7 +21,6 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
-app.use('/api/users',userRouter);
 app.get('/',(req,res,next) => {
   res.json({
     message: 'Welcome to my full stack project'
