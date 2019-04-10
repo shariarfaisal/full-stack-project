@@ -1,6 +1,6 @@
 const validator = require('validator')
 
-const userValidate = (user) => {
+const updateValidator = (user) => {
   const validate = {
     error: {}
   }
@@ -28,18 +28,14 @@ const userValidate = (user) => {
     validate.error.email = "Please enter a valid email."
   }
 
-  // Password ...
-  if(!user.password){
-    validate.error.password = "Field must not be empty!"
-  }else if(user.password.length < 6){
-    validate.error.password = "Password character must be greater than or equal 6!"
+  // Old Password ...
+  if(!user.oldPassword){
+    validate.error.oldPassword = "Field must not be empty!"
   }
 
-  // Confirm Password
-  if(!user.confirmPassword){
-    validate.error.confirmPassword = "Field must not be empty !"
-  }else if(user.password !== user.confirmPassword){
-    validate.error.confirmPassword = "Does't match your password."
+  // new Password
+  if(!user.newPassword){
+    validate.error.newPassword = "Field must not be empty !"
   }
 
   if(Object.keys(validate.error).length !== 0){
@@ -51,4 +47,4 @@ const userValidate = (user) => {
   return validate;
 }
 
-module.exports = userValidate;
+module.exports = updateValidator;
